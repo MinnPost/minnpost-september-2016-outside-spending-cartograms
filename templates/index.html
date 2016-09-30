@@ -1,0 +1,87 @@
+<style>
+
+  .district {
+    border-radius: 6px;
+    background-color: #F8F8F8;
+    text-align: center;
+    width: 20px;
+    height: 30px;
+    font-family: helvetica;
+    color: #F8F8F8;
+  }
+
+  /* Tooltip text */
+  .district .tooltiptext {
+      visibility: hidden;
+      max-width: 300px;
+      background-color: #fff;
+      color: #666;
+      text-align: left;
+      padding: 1em;
+      border: 3px solid #ccc;
+      border-radius: 6px;
+
+      /* Position the tooltip text*/
+      position: absolute;
+      z-index: 1;
+  }
+
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .district:hover .tooltiptext {
+      visibility: visible;
+  }
+
+  .legend {
+    max-width: 640px;
+  }
+
+  .legend li {
+    float: left;
+    list-style-type: none;
+    width: 200px;
+    margin-bottom: 1em;
+    font-family: helvetica;
+    font-size: 1.2em;
+    line-height: 100%;
+  }
+
+  .legend li span {
+    height: 30px;
+    width: 30px;
+    border-radius: 10px;
+    display: block;
+    float: left;
+    margin-top: -5px;
+    margin-right: 1em;
+  }
+
+  .legend li span.row2 {
+    margin-bottom: 3em;
+  }
+
+
+</style>
+
+
+<table class="us-carto">
+
+{% for row in data %}
+<tr>
+  {% for col in row %}
+  <td class="{% if col.district != "" %}district {%endif%}">{{col.district}}</td>
+  {% endfor %}
+</tr>
+{% endfor %}
+
+</table>
+<div class="legend">
+  <h4>Legend</h4>
+  <ul>
+    <li><span class="m ">&nbsp;</span> TK</li>
+    <li><span class="i ">&nbsp;</span> TK</li>
+    <li><span class="t ">&nbsp;</span> TK</li>
+    <li><span class="mi row2">&nbsp;</span> TK</li>
+    <li><span class="it row2">&nbsp;</span> TK</li>
+    <li><span class="ti row2">&nbsp;</span> TK</li>
+  </ul>
+</div>
