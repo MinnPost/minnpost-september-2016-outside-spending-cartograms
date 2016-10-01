@@ -10,6 +10,12 @@
     color: #F8F8F8;
   }
 
+  .q1 {background-color: #acd1b2;}
+  .q2 {background-color: #82ba8e;}
+  .q3 {background-color: #56a36a;}
+  .q4 {background-color: #1d8c47;}
+  .q5 {background-color: #00792a;}
+
   /* Tooltip text */
   .district .tooltiptext {
       visibility: hidden;
@@ -68,7 +74,7 @@
 {% for row in data %}
 <tr>
   {% for col in row %}
-  <td class="{% if col.name != "" %}district {%endif%}">{{col.name}}</td>
+  <td class="{% if col.name != "" %}district {% for class in col.classes %} {{class}}{% endfor %}{% endif %}">{{col.name}}</td>
   {% endfor %}
 </tr>
 {% endfor %}
