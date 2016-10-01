@@ -63,12 +63,12 @@
 </style>
 
 
-<table class="us-carto">
+<table class="carto">
 
 {% for row in data %}
 <tr>
   {% for col in row %}
-  <td class="{% if col.district != "" %}district {%endif%}">{{col.district}}</td>
+  <td class="{% if col.name != "" %}district {%endif%}">{{col.name}}</td>
   {% endfor %}
 </tr>
 {% endfor %}
