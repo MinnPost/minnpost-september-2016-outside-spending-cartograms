@@ -4,7 +4,7 @@
     border-radius: 6px;
     background-color: #F8F8F8;
     text-align: center;
-    width: 20px;
+    width: 30px;
     height: 30px;
     font-family: helvetica;
     color: #F8F8F8;
@@ -68,18 +68,23 @@
 
 </style>
 
+{% for group in data %}
+    <table class="carto">
 
-<table class="carto">
+    {% for row in group %}
+    <tr>
+      {% for col in row %}
+      <td class="{% if col.name != "" %}district {% for class in col.classes %} {{class}}{% endfor %}{% endif %}">{{col.name}}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
 
-{% for row in data %}
-<tr>
-  {% for col in row %}
-  <td class="{% if col.name != "" %}district {% for class in col.classes %} {{class}}{% endfor %}{% endif %}">{{col.name}}</td>
-  {% endfor %}
-</tr>
+    </table>
 {% endfor %}
 
-</table>
+
+
+<!-- todo: custom legends
 <div class="legend">
   <h4>Legend</h4>
   <ul>
@@ -91,3 +96,4 @@
     <li><span class="ti row2">&nbsp;</span> TK</li>
   </ul>
 </div>
+-->

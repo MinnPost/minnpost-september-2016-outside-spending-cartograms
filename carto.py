@@ -38,7 +38,6 @@ def assign_classes(name, party):
                 amts_raised.append(float(camfi_data.get(district,{}).get(party,0)))
 
     fifth = max(amts_raised)/5
-    print(fifth)
     this_total = float(camfi_data.get(name,{}).get(party,0))
     if this_total == 0:
         classes.append("no-data")
@@ -81,7 +80,15 @@ def aranged_data(arangement, party):
 
 @app.route("/")
 def home():
-    return render_template('index.html', data=aranged_data(house_aRangement, "D"))
+
+    data = [
+             aranged_data(house_aRangement, "R"),
+             aranged_data(house_aRangement, "D"),
+             aranged_data(senate_aRangement, "R"),
+             aranged_data(senate_aRangement, "D")
+           ]
+
+    return render_template('index.html', data=data)
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
