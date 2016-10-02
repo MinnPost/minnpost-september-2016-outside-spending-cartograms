@@ -32,6 +32,39 @@ with open('data/senate-incumbents.csv', 'r') as f:
     for row in reader:
         incumbents[row['District']] = row['Seat held in 2015-16']
 
+primary_winners = {}
+with open('data/2016-primary-state-senate.csv','r') as f:
+    reader = csv.reader(f, delimiter=";")
+    for row in reader:
+        district = row[4][row[4].find("District ")+9:]
+        party = row[10][0]
+        name = row[7]
+        votes = int(row[13])
+        if district in primary_winners:
+            if party in primary_winners[district]:
+                if primary_winners[district][party]['votes'] < votes:
+                    primary_winners[district][party] = {'name': name, 'votes': votes}
+            else:
+                primary_winners[district][party] = {'name': name, 'votes': votes}
+        else:
+            primary_winners[district] = {party: {'name': name, 'votes': votes}}
+
+with open('data/2016-primary-state-representative.csv','r') as f:
+    reader = csv.reader(f, delimiter=";")
+    for row in reader:
+        district = row[4][row[4].find("District ")+9:]
+        party = row[10][0]
+        name = row[7]
+        votes = int(row[13])
+        if district in primary_winners:
+            if party in primary_winners[district]:
+                if primary_winners[district][party]['votes'] < votes:
+                    primary_winners[district][party] = {'name': name, 'votes': votes}
+            else:
+                primary_winners[district][party] = {'name': name, 'votes': votes}
+        else:
+            primary_winners[district] = {party: {'name': name, 'votes': votes}}
+
 
 candidates = {}
 with open('data/CF_FedStateCounty.csv','r') as f:
@@ -43,6 +76,13 @@ with open('data/CF_FedStateCounty.csv','r') as f:
             name = row[1]
             party = row[5][0]
             incumbent = False
+
+            if district in primary_winners:
+                if party in primary_winners[district]:
+                    if name != primary_winners[district][party]['name']:
+                        continue
+
+
             if incumbents.get(district, "") == name:
                 incumbent = True
 
