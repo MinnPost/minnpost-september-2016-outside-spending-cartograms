@@ -21,6 +21,51 @@ with open('data/sep-16-mnleg-ies.csv','r') as f:
         else:
             camfi_data[district] = {party: total}
 
+#build dict of candidates in each district
+incumbents = {}
+with open('data/house-incumbents.csv', 'r') as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        incumbents[row['District']] = row['Seat held in 2015-16']
+with open('data/senate-incumbents.csv', 'r') as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        incumbents[row['District']] = row['Seat held in 2015-16']
+
+
+candidates = {}
+with open('data/CF_FedStateCounty.csv','r') as f:
+    reader = csv.reader(f, delimiter=";")
+    for row in reader:
+        if "State Senator" in row[3] or "State Representative" in row[3]: #ignore non lege candidates
+            district = row[3][row[3].find("District ")+9:]
+
+            name = row[1]
+            party = row[5][0]
+            incumbent = False
+            if incumbents.get(district, "") == name:
+                incumbent = True
+
+            if district in candidates:
+                if incumbent:
+                    candidates[district].insert(0, {'name': name,
+                                                    'party': party,
+                                                    'incumbent': incumbent
+                                                    })
+                else:
+                    candidates[district].append({'name': name,
+                                                 'party': party,
+                                                 'incumbent': incumbent
+                                                })
+            else:
+                candidates[district] = [{'name': name,
+                                         'party': party,
+                                         'incumbent': incumbent
+                                        }]
+
+def get_candidates(district):
+    return candidates.get(district,[])
+
 def get_spending(chamber, party):
     #calculate classes based on equal-interval quintiles
     amts_raised = []
@@ -33,7 +78,6 @@ def get_spending(chamber, party):
             if district[-1] not in ["A","B"]:
                 amts_raised.append(float(camfi_data.get(district,{}).get(party,0)))
     return amts_raised
-
 
 def assign_classes(name, party):
     #This is always going to need to be customized according to the project
@@ -115,7 +159,8 @@ def aranged_data(arangement, party):
                         total = '${:,}'.format(total)
                     cells.append({'name':name,
                                   'classes': assign_classes(name, party),
-                                  'total': total
+                                  'total': total,
+                                  'candidates': get_candidates(name)
                                   })
                     inserted = True
             if not inserted:

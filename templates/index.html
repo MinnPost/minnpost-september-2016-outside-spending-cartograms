@@ -119,7 +119,19 @@
         {% for row in group.carto %}
             <tr>
               {% for col in row %}
-              <td class="{% if col.name != ""%}district {% for class in col.classes %} {{class}}{% endfor %}{%endif%}">{{col.name}}{% if col.name != ""%}<span class="tooltiptext">{{group.chamber}} District {{col.name}}<br/>{{col.total}}</span>{%endif%}</td>
+              <td class="{% if col.name != ""%}district {% for class in col.classes %} {{class}}{% endfor %}{%endif%}">
+                  {{col.name}}
+                  {% if col.name != ""%}
+                  <span class="tooltiptext">
+                      <strong>{{group.chamber}} District {{col.name}}</strong><br/>
+                      {{col.total}}<br/>
+                      <strong>Candidates:</strong><br/>
+                      {% for candidate in col.candidates %}
+                      {{candidate.name}} ({{candidate.party}}) {% if candidate.incumbent %}*{%endif%}<br>
+                      {%endfor%}
+                  </span>
+                  {%endif%}
+              </td>
               {% endfor %}
             </tr>
         {% endfor %}
