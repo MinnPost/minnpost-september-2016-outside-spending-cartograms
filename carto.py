@@ -21,14 +21,10 @@ with open('data/sep-16-mnleg-ies.csv','r') as f:
         else:
             camfi_data[district] = {party: total}
 
-def assign_classes(name, party):
-
-    #This is always going to need to be customized according to the project
-    classes = []
-
+def get_spending(chamber, party):
     #calculate classes based on equal-interval quintiles
     amts_raised = []
-    if name[-1] in ["A","B"]: #house district
+    if chamber == "house": #house district
         for district in camfi_data:
             if district[-1] in ["A","B"]:
                 amts_raised.append(float(camfi_data.get(district,{}).get(party,0)))
@@ -36,6 +32,16 @@ def assign_classes(name, party):
         for district in camfi_data:
             if district[-1] not in ["A","B"]:
                 amts_raised.append(float(camfi_data.get(district,{}).get(party,0)))
+    return amts_raised
+
+
+def assign_classes(name, party):
+    #This is always going to need to be customized according to the project
+    classes = []
+    chamber = "senate"
+    if name[-1] in ["A", "B"]:
+        chamber = "house"
+    amts_raised = get_spending(chamber, party)
 
     fifth = max(amts_raised)/5
     this_total = float(camfi_data.get(name,{}).get(party,0))
@@ -55,6 +61,37 @@ def assign_classes(name, party):
 
     return classes #list of classes
 
+def get_legend(chamber,party):
+    amts_raised = get_spending(chamber, party)
+    top = max(amts_raised)
+
+    return [
+                {
+                    'class': 'q5',
+                    'text': 'Up to ${:,}'.format(int(top))
+                },
+                {
+                    'class': 'q4',
+                    'text': 'Up to ${:,}'.format(int(top*.8))
+                },
+                {
+                    'class': 'q3',
+                    'text': 'Up to ${:,}'.format(int(top*.6))
+                },
+                {
+                    'class': 'q2',
+                    'text': 'Up to ${:,}'.format(int(top*.4))
+                },
+                {
+                    'class': 'q1',
+                    'text': 'Up to ${:,}'.format(int(top*.2))
+                },
+                {
+                    'class': 'no-data',
+                    'text': 'No spending data reported'
+                }
+           ]
+
 def total_rows(arangement):
     return max([el[1] for el in arangement])
 
@@ -71,7 +108,15 @@ def aranged_data(arangement, party):
             for el in arangement:
                 if c == el[0] and r == el[1]:
                     name = el[2]
-                    cells.append({'name':name, 'classes': assign_classes(name, party)})
+                    total = round((float(camfi_data.get(name,{}).get(party,0))),2)
+                    if total == 0:
+                        total = 'No spending data reported'
+                    else:
+                        total = '${:,}'.format(total)
+                    cells.append({'name':name,
+                                  'classes': assign_classes(name, party),
+                                  'total': total
+                                  })
                     inserted = True
             if not inserted:
                 cells.append({'name':""})
@@ -82,10 +127,33 @@ def aranged_data(arangement, party):
 def home():
 
     data = [
-             aranged_data(house_aRangement, "R"),
-             aranged_data(house_aRangement, "D"),
-             aranged_data(senate_aRangement, "R"),
-             aranged_data(senate_aRangement, "D")
+                {
+                 "title": "Minnesota House — Spending by Republican-aligned groups",
+                 "chamber": "House",
+                 "carto": aranged_data(house_aRangement, "R"),
+                 "legend": get_legend("house", "R")
+                },
+
+                {
+                 "title": "Minnesota House — Spending by Democrat-aligned groups",
+                 "chamber": "House",
+                 "carto": aranged_data(house_aRangement, "D"),
+                 "legend": get_legend("house", "D")
+                },
+
+                {
+                 "title": "Minnesota Senate — Spending by Republican-aligned groups",
+                 "chamber": "Senate",
+                 "carto": aranged_data(senate_aRangement, "R"),
+                 "legend": get_legend("senate", "R")
+                },
+
+                {
+                 "title": "Minnesota Senate — Spending by Democrat-aligned groups",
+                 "chamber": "Senate",
+                 "carto": aranged_data(senate_aRangement, "D"),
+                 "legend": get_legend("senate", "D")
+                }
            ]
 
     return render_template('index.html', data=data)

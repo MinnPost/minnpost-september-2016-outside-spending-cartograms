@@ -2,7 +2,6 @@
 
   .district {
     border-radius: 6px;
-    background-color: #F8F8F8;
     text-align: center;
     width: 30px;
     height: 30px;
@@ -10,6 +9,7 @@
     color: #F8F8F8;
   }
 
+  .no-data {background-color: #CCCCCC;}
   .q1 {background-color: #acd1b2;}
   .q2 {background-color: #82ba8e;}
   .q3 {background-color: #56a36a;}
@@ -37,63 +37,83 @@
       visibility: visible;
   }
 
+  .map-and-legend {
+   max-width: 850px;
+   margin: auto;
+   overflow: hidden;
+   margin-bottom: 2em;
+ }
+
+ .carto-container {
+   max-width: 600px;
+   float: left;
+   margin-right: 2em;
+ }
+
+
   .legend {
-    max-width: 640px;
-  }
+      max-width: 210px;
+      font-family: helvetica;
+      float: left;
+    }
 
-  .legend li {
-    float: left;
-    list-style-type: none;
-    width: 200px;
-    margin-bottom: 1em;
-    font-family: helvetica;
-    font-size: 1.2em;
-    line-height: 100%;
-  }
+    .legend h4 {
+      margin-top: 0;
+    }
 
-  .legend li span {
-    height: 30px;
-    width: 30px;
-    border-radius: 10px;
-    display: block;
-    float: left;
-    margin-top: -5px;
-    margin-right: 1em;
-  }
+    .legend ul {padding: 0;}
 
-  .legend li span.row2 {
-    margin-bottom: 3em;
-  }
+    .legend li {
+      float: left;
+      list-style-type: none;
+      width: 200px;
+      margin-bottom: 1em;
+      font-size: .9em;
+      line-height: 100%;
+    }
+
+    .legend li span {
+      height: 20px;
+      width: 20px;
+      border-radius: 5px;
+      display: block;
+      float: left;
+      margin-top: -2px;
+      margin-right: 1em;
+    }
 
 
 </style>
 
 {% for group in data %}
-    <table class="carto">
+<div class="map-and-legend">
+    <h4>{{group.title}}</h4>
+    <div class="carto-container">
+        <table class="carto {{group.chamber}}" style="border-collapse: separate; border-spacing: 3px;">
 
-    {% for row in group %}
-    <tr>
-      {% for col in row %}
-      <td class="{% if col.name != "" %}district {% for class in col.classes %} {{class}}{% endfor %}{% endif %}">{{col.name}}</td>
-      {% endfor %}
-    </tr>
-    {% endfor %}
+        {% for row in group.carto %}
+            <tr>
+              {% for col in row %}
+              <td class="{% if col.name != ""%}district {% for class in col.classes %} {{class}}{% endfor %}{%endif%}">{{col.name}}{% if col.name != ""%}<span class="tooltiptext">{{group.chamber}} District {{col.name}}<br/>{{col.total}} spent</span>{%endif%}</td>
+              {% endfor %}
+            </tr>
+        {% endfor %}
 
-    </table>
+        </table>
+    </div>
+    <div class="legend">
+      <h4>Legend</h4>
+      <ul>
+        {% for entry in group.legend %}
+        <li><span class="{{entry.class}}">&nbsp;</span> {{entry.text}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+</div>
 {% endfor %}
 
 
 
 <!-- todo: custom legends
-<div class="legend">
-  <h4>Legend</h4>
-  <ul>
-    <li><span class="m ">&nbsp;</span> TK</li>
-    <li><span class="i ">&nbsp;</span> TK</li>
-    <li><span class="t ">&nbsp;</span> TK</li>
-    <li><span class="mi row2">&nbsp;</span> TK</li>
-    <li><span class="it row2">&nbsp;</span> TK</li>
-    <li><span class="ti row2">&nbsp;</span> TK</li>
-  </ul>
-</div>
+
 -->
