@@ -82,7 +82,6 @@ with open('data/CF_FedStateCounty.csv','r') as f:
                     if name != primary_winners[district][party]['name']:
                         continue
 
-
             if incumbents.get(district, "") == name:
                 incumbent = True
 
@@ -105,6 +104,13 @@ with open('data/CF_FedStateCounty.csv','r') as f:
 
 def get_candidates(district):
     return candidates.get(district,[])
+
+def has_incumbent(district):
+    incumbent = False
+    for candidate in candidates.get(district,[]):
+        if candidate['incumbent']:
+            incumbent = True
+    return incumbent
 
 def get_spending(chamber, party):
     #calculate classes based on equal-interval quintiles
@@ -200,7 +206,8 @@ def aranged_data(arangement, party):
                     cells.append({'name':name,
                                   'classes': assign_classes(name, party),
                                   'total': total,
-                                  'candidates': get_candidates(name)
+                                  'candidates': get_candidates(name),
+                                  'has_incumbent': has_incumbent(name)
                                   })
                     inserted = True
             if not inserted:
@@ -213,28 +220,28 @@ def home():
 
     data = [
                 {
-                 "title": "Minnesota House — Spending by Republican-aligned groups",
+                 "title": "Minnesota House — Spending to benefit Republican candidates",
                  "chamber": "House",
                  "carto": aranged_data(house_aRangement, "R"),
                  "legend": get_legend("house", "R")
                 },
 
                 {
-                 "title": "Minnesota House — Spending by Democrat-aligned groups",
+                 "title": "Minnesota House — Spending to benefit Democratic candidates",
                  "chamber": "House",
                  "carto": aranged_data(house_aRangement, "D"),
                  "legend": get_legend("house", "D")
                 },
 
                 {
-                 "title": "Minnesota Senate — Spending by Republican-aligned groups",
+                 "title": "Minnesota Senate — Spending to benefit Republican candidates",
                  "chamber": "Senate",
                  "carto": aranged_data(senate_aRangement, "R"),
                  "legend": get_legend("senate", "R")
                 },
 
                 {
-                 "title": "Minnesota Senate — Spending by Democrat-aligned groups",
+                 "title": "Minnesota Senate — Spending to benefit Democratic candidates",
                  "chamber": "Senate",
                  "carto": aranged_data(senate_aRangement, "D"),
                  "legend": get_legend("senate", "D")

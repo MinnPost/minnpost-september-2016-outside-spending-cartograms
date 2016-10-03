@@ -1,111 +1,90 @@
 <style>
 
-  .district {
-    border-radius: 6px;
-    text-align: center;
-    width: 30px;
-    height: 30px;
-    font-family: helvetica;
-    color: #F8F8F8;
-  }
+.district {
+  border-radius: 6px;
+  text-align: center;
+  width: 30px;
+  height: 30px;
+  color: #F8F8F8;
+}
 
-  .House td.district {
-      font-size: .5em;
-      width: 20px;
-      height: 20px;
-  }
+.no-data {background-color: #CCCCCC;}
+.q1 {background-color: #acd1b2;}
+.q2 {background-color: #82ba8e;}
+.q3 {background-color: #56a36a;}
+.q4 {background-color: #1d8c47;}
+.q5 {background-color: #00792a;}
 
-  .no-data {background-color: #CCCCCC;}
-  .q1 {background-color: #acd1b2;}
-  .q2 {background-color: #82ba8e;}
-  .q3 {background-color: #56a36a;}
-  .q4 {background-color: #1d8c47;}
-  .q5 {background-color: #00792a;}
+/* Tooltip text */
+.district .tooltiptext {
+  visibility: hidden;
+  max-width: 300px;
+  background-color: #fff;
+  color: #666;
+  text-align: left;
+  padding: 1em;
+  border: 3px solid #ccc;
+  border-radius: 6px;
+  font-size: .9em;
+  /* Position the tooltip text*/
+  position: absolute;
+  z-index: 1;
+}
 
-  /* Tooltip text */
-  .district .tooltiptext {
-      visibility: hidden;
-      max-width: 300px;
-      background-color: #fff;
-      color: #666;
-      text-align: left;
-      padding: 1em;
-      border: 3px solid #ccc;
-      border-radius: 6px;
+.district .tooltiptext ul {
+  padding: 0;
+  margin-top: 0;
+  list-style-type: none;
+}
 
-      /* Position the tooltip text*/
-      position: absolute;
-      z-index: 1;
-  }
+.district:hover .tooltiptext {
+  visibility: visible;
+}
 
-  .House .district .tooltiptext {
-      font-size: 1.5em;
-  }
+.map-and-legend {
+  max-width: 640px;
+  margin: auto;
+  overflow: hidden;
+  margin-bottom: 2em;
+  font-family: helvetica;
+}
 
-  /* Show the tooltip text when you mouse over the tooltip container */
-  .district:hover .tooltiptext {
-      visibility: visible;
-  }
+.carto-container {
+  max-width: 640px;
+  float: left;
+  margin-bottom: 1em;
+}
 
-  .map-and-legend {
-   max-width: 850px;
-   margin: auto;
-   overflow: hidden;
-   margin-bottom: 2em;
- }
+.legend {
+  float: left;
+}
 
- .carto-container {
-   max-width: 600px;
-   float: left;
-   margin-right: 2em;
- }
+.legend h4 {
+  margin-top: 0;
+}
 
+.legend ul {
+  padding: 0;
+}
 
-  .legend {
-      max-width: 210px;
-      font-family: helvetica;
-      float: left;
-    }
+.legend li {
+  float: left;
+  list-style-type: none;
+  width: 200px;
+  margin-bottom: 1em;
+  font-size: .9em;
+  line-height: 100%;
+}
 
-    .legend h4 {
-      margin-top: 0;
-    }
-
-    .legend ul {padding: 0;}
-
-    .legend li {
-      float: left;
-      list-style-type: none;
-      width: 200px;
-      margin-bottom: 1em;
-      font-size: .9em;
-      line-height: 100%;
-    }
-
-    .legend li span {
-      height: 20px;
-      width: 20px;
-      border-radius: 5px;
-      display: block;
-      float: left;
-      margin-top: -2px;
-      margin-right: 1em;
-    }
-
-    @media (max-width: 800px) {
-      .carto-container {
-        margin: auto;
-      }
-      .legend {
-        max-width: 100%;
-      }
-      .legend h4 {
-        margin-top: 1em;
-      }
-      .legend li {
-        margin-right: 5px;
-      }
-  }
+.legend li span {
+  height: 20px;
+  width: 20px;
+  border-radius: 5px;
+  display: block;
+  float: left;
+  margin-top: -2px;
+  margin-right: 1em;
+}
 
 
 </style>
@@ -123,12 +102,15 @@
                   {{col.name}}
                   {% if col.name != ""%}
                   <span class="tooltiptext">
-                      <strong>{{group.chamber}} District {{col.name}}</strong><br/>
-                      {{col.total}}<br/>
-                      <strong>Candidates:</strong><br/>
+                      <strong>{{group.chamber}} District {{col.name}}</strong><br/><br/>
+                      {% if "$" in col.total %}Total spending: {% endif %}{{col.total}}<br/><br/>
+                      <strong>Candidates:</strong>
+                      <ul>
                       {% for candidate in col.candidates %}
-                      {{candidate.name}} ({{candidate.party}}) {% if candidate.incumbent %}*{%endif%}<br>
+                        <li>{{candidate.name}} ({{candidate.party}}) {% if candidate.incumbent %}*{%endif%}</li>
                       {%endfor%}
+                      </ul>
+                      {% if col.has_incumbent %}<small><em>*Incumbent</em></small>{% endif %}
                   </span>
                   {%endif%}
               </td>
